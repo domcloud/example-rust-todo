@@ -6,13 +6,14 @@
 mod tests;
 mod task;
 
+
 use rocket::{Rocket, Build};
 use rocket::fairing::AdHoc;
 use rocket::request::FlashMessage;
 use rocket::response::{Flash, Redirect};
 use rocket::serde::Serialize;
 use rocket::form::Form;
-use rocket::fs::{FileServer, relative};
+use rocket::fs::{relative, FileServer, Options};
 
 use rocket_dyn_templates::Template;
 
@@ -110,7 +111,7 @@ fn rocket() -> _ {
         .attach(DbConn::fairing())
         .attach(Template::fairing())
         .attach(AdHoc::on_ignite("Run Migrations", run_migrations))
-        .mount("/", FileServer::new(relative!("static")))
+        .mount("/", FileServer::new(relative!("static"), Options::Index))
         .mount("/", routes![index])
         .mount("/todo", routes![new, toggle, delete])
 }
