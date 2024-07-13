@@ -18,7 +18,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-    - name: dtolnay/rust-toolchain@1.79.0
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@1.79.0
     - uses: Swatinem/rust-cache@v1
     - name: Build release binary
       run: cargo build --release --locked
