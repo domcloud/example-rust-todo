@@ -18,16 +18,11 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-    - name: Install stable toolchain
-      uses: actions-rs/toolchain@v1
+    - name: dtolnay/rust-toolchain@1.79.0
     - uses: Swatinem/rust-cache@v1
     - name: Build release binary
-      uses: actions-rs/cargo@v1
-      with:
-        command: build
-        args: --release --locked
+      run: cargo build --release --locked
     - run: mkdir bin && cp ./target/release/${{ env.BIN_NAME }} ./bin/
-
     - name: Copy to Remote Server
       uses: pierrickdelrieu/scp-action@0.1.0
       with:
