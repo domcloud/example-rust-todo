@@ -29,7 +29,7 @@ jobs:
     - run: mkdir bin && cp ./target/release/${{ env.BIN_NAME }} ./bin/
 
     - name: Copy to Remote Server
-      uses: pierrickdelrieu/scp-action@v0.1.0
+      uses: pierrickdelrieu/scp-action@0.1.0
       with:
         host: ${{ env.SERVER_HOST }}
         ssh_username: ${{ secrets.SSH_USERNAME }}
