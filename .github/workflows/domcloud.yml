@@ -21,11 +21,11 @@ jobs:
     - uses: Swatinem/rust-cache@v1
     - name: Build release binary
       run: cargo build --release --locked
+      # 1. Install the SSH identifier from action secrets 
+      # 2. Copy app binary to server
+      # 3. Also copy static files also needed by the binaries
     - name: Copy to Remote Server
       run: >-
-        # Install the SSH identifier from action secrets 
         mkdir -p $HOME/.ssh; (echo "${{ secrets.SSH_KEY }}" > $HOME/.ssh/id_rsa); chmod 0600 $HOME/.ssh/id_rsa;
-        # Copy app binary to server
         scp -o StrictHostKeyChecking=no -i $HOME/.ssh/id_rsa ${{ env.APP_BINARY_PATH }} ${{ env.SERVER_DESTINATION }};
-        # Also copy static files also needed by the binaries
         scp -o StrictHostKeyChecking=no -i $HOME/.ssh/id_rsa -r db static migrations Rocket.toml ${{ env.SERVER_DESTINATION }};
