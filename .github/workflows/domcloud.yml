@@ -6,15 +6,13 @@ on:
       - main
   workflow_dispatch:
 
-
 env:
-  BIN_NAME: todo
-  SERVER_HOST: sga.domcloud.co
+  APP_BINARY_PATH: target/release/todo
+  SERVER_DESTINATION: rocket-rs-todo-app@sga.domcloud.co:./public_html
 
 jobs:
   copy:
     runs-on: ubuntu-latest
-    
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -23,15 +21,7 @@ jobs:
     - uses: Swatinem/rust-cache@v1
     - name: Build release binary
       run: cargo build --release --locked
-    - run: mkdir bin && cp ./target/release/${{ env.BIN_NAME }} ./bin/
     - name: Copy to Remote Server
-      uses: pierrickdelrieu/scp-action@0.1.0
-      with:
-        host: ${{ env.SERVER_HOST }}
-        ssh_username: ${{ secrets.SSH_USERNAME }}
-        ssh_key: ${{ secrets.SSH_KEY }}
-        ssh_passphrase: ''
-        source_dir: ./bin
-        destination_dir: ./public_html
-        rm: true
-
+      run: >
+        mkdir -p $HOME/.ssh && (echo "${{ secrets.SSH_KEY }}" > $HOME/.ssh/id_rsa) && chmod 0600 $HOME/.ssh/id_rsa
+        scp -o StrictHostKeyChecking=no -i $HOME/.ssh/id_rsa ${{ env.APP_BINARY_PATH }} ${{ env.SERVER_DESTINATION }}
