@@ -22,12 +22,12 @@ jobs:
     - name: Build release binary
       run: cargo build --release --locked
       # 1. Install the SSH identifier from action secrets 
-      # 2. Copy app binary to server
-      # 3. Also copy static files also needed by the binaries
-      # 4. Restart the app configured by NGINX
+      # 2. Kill the app (unlocks the binary for writing)
+      # 3. Copy app binary to server
+      # 4. Also copy static files also needed by the binaries
     - name: Copy to Remote Server
       run: >-
         mkdir -p $HOME/.ssh; (echo "${{ secrets.SSH_KEY }}" > $HOME/.ssh/id_rsa); chmod 0600 $HOME/.ssh/id_rsa;
+        ssh -o StrictHostKeyChecking=no -i $HOME/.ssh/id_rsa restart;
         scp -o StrictHostKeyChecking=no -i $HOME/.ssh/id_rsa ${{ env.APP_BINARY_PATH }} ${{ env.SERVER_DESTINATION }};
         scp -o StrictHostKeyChecking=no -i $HOME/.ssh/id_rsa -r db static migrations Rocket.toml ${{ env.SERVER_DESTINATION }};
-        ssh -o StrictHostKeyChecking=no -i $HOME/.ssh/id_rsa restart;
